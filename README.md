@@ -13,3 +13,5 @@ Convert your old Android smartphone into a smart desk clock
 - Beautiful wallpapers courtesy [Unsplash](https://unsplash.com)
 - Free and open-source
 
+## Download
+[![Play Store](ghub/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.k2.deskclock)
