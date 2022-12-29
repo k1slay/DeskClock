@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Desk Clock</string>
+    <string name="location_error_disabled">Location services disabled, weather forecast will not work</string>
+    <string name="location_error_permission">Location permission denied, weather forecast will not work</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="clock_size">Clock size</string>
+    <string name="wallpaper_query">Wallpaper search query</string>
+</resources>

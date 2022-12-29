@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    compileSdk deps.app.compile
+
+    defaultConfig {
+        minSdk deps.app.min
+        targetSdk deps.app.target
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        String unsplashClientId = project.property("unsplash.client.id")
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "UNSPLASH_CLIENT_ID", "\"${unsplashClientId}\""
+        }
+        debug {
+            buildConfigField "String", "UNSPLASH_CLIENT_ID", "\"${unsplashClientId}\""
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    namespace 'com.k2.deskclock.wallpaper'
+
+}
+
+dependencies {
+    implementation project(":commons")
+    // hilt
+    implementation deps.hilt.base
+    kapt deps.hilt.processor
+    // retrofit
+    deps.retrofit.values().forEach { dep ->
+        implementation dep
+    }
+    // room
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.compiler
+
+    deps.instrumentedTest.values().forEach { dep ->
+        androidTestImplementation dep
+    }
+    deps.unitTest.values().forEach { dep ->
+        testImplementation dep
+    }
+}

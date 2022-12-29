@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    namespace 'com.k2.deskclock.localstore'
+    compileSdk deps.app.compile
+
+    defaultConfig {
+        minSdk deps.app.min
+        targetSdk deps.app.target
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(":weather")
+    implementation project(":wallpaper")
+    implementation project(":location")
+
+    deps.unitTest.values().forEach { dep ->
+        testImplementation dep
+    }
+    deps.instrumentedTest.values().forEach { dep ->
+        androidTestImplementation dep
+    }
+    // room
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.compiler
+    // hilt
+    implementation deps.hilt.base
+    kapt deps.hilt.processor
+}
