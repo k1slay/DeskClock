@@ -10,12 +10,12 @@ import kotlin.text.Charsets.UTF_8
 data class UnsplashResponse(
     @SerializedName("urls") val urls: Urls,
     @SerializedName("id") val id: String,
-    @SerializedName("user") val user: User,
+    @SerializedName("user") val user: User
 )
 
 data class User(
     @SerializedName("name") val name: String,
-    @SerializedName("username") val profile: String,
+    @SerializedName("username") val profile: String
 )
 
 data class Urls(
