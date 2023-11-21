@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import com.k2.deskclock.location.models.ErrorType
 import com.k2.deskclock.location.utils.hasLocationPermission
 import com.k2.deskclock.ui.SystemBarManager
@@ -25,6 +27,7 @@ import com.k2.deskclock.ui.UiStateHolder.Companion.PERIODIC_REFRESH_INTERVAL
 import com.k2.deskclock.ui.theme.DeskClockTheme
 import com.k2.deskclock.ui.widgets.NavRoot
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import java.lang.Long.min
 
 @AndroidEntryPoint
@@ -33,6 +36,7 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
     private val tickReceiver = TickReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
             DeskClockTheme(viewModel.darkTheme.value) {
@@ -134,4 +138,8 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
 
     override val insetState: MutableState<Boolean>
         get() = viewModel.insetVisible
+
+    override val viewScope: CoroutineScope
+        get() = lifecycleScope
+
 }

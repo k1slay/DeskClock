@@ -8,10 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -38,6 +40,7 @@ import coil.compose.AsyncImage
 import com.k2.deskclock.R
 import com.k2.deskclock.location.models.Place
 import com.k2.deskclock.ui.UiStateHolder
+import com.k2.deskclock.ui.theme.bgGradient
 import com.k2.deskclock.utils.getFormattedTime
 import com.k2.deskclock.utils.launchUrl
 import com.k2.deskclock.wallpaper.data.models.Wallpaper
@@ -72,6 +75,43 @@ fun HomeView(
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background.copy(alpha = 0.5F)),
         )
+
+        if (uiStates.insetVisible.value.not()) {
+            uiStates.weather.value?.place?.let { PlaceText(location = it) }
+            DateText(uiStates)
+        }
+
+        MainContent(
+            uiStates = uiStates,
+            navController = navController,
+            refreshClick = refreshClick,
+        )
+    }
+}
+
+@Composable
+private fun MainContent(
+    uiStates: UiStateHolder,
+    navController: NavController,
+    refreshClick: () -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .safeDrawingPadding(),
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Clock(uiStates)
+            uiStates.weather.value?.let {
+                Weather(weather = it, showForecast = true)
+            }
+        }
+
         if (uiStates.insetVisible.value) {
             NavIcon(
                 navController = navController,
@@ -86,32 +126,32 @@ fun HomeView(
                 navTarget = "settings",
                 clearBackStack = false,
             )
-            uiStates.wallpaper.value?.let { wallpaper ->
-                ImageAnnotation(wallpaper)
-            }
-            Image(
-                painter = painterResource(R.drawable.ic_sync),
-                contentDescription = "refresh",
-                colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
+
+            Column(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .absoluteOffset(y = (-60).dp)
-                        .size(32.dp)
-                        .clickable { refreshClick.invoke() },
-            )
-        } else {
-            uiStates.weather.value?.place?.let { PlaceText(location = it) }
-            DateText(uiStates)
-        }
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Clock(uiStates)
-            uiStates.weather.value?.let {
-                Weather(weather = it, showForecast = true)
+                        .padding(vertical = 12.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_sync),
+                    contentDescription = "refresh",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
+                    modifier =
+                        Modifier
+                            .clickable { refreshClick.invoke() }
+                            .size(80.dp)
+                            .background(
+                                brush = Brush.radialGradient(bgGradient()),
+                                shape = CircleShape,
+                            )
+                            .padding(20.dp),
+                )
+                uiStates.wallpaper.value?.let { wallpaper ->
+                    ImageAnnotation(wallpaper)
+                }
             }
         }
         LocationErrorSnackBar(uiStateHolder = uiStates)
@@ -119,7 +159,7 @@ fun HomeView(
 }
 
 @Composable
-private fun BoxScope.ImageAnnotation(wallpaper: Wallpaper) {
+private fun ImageAnnotation(wallpaper: Wallpaper) {
     val context = LocalContext.current
     val annotatedText =
         buildAnnotatedString {
@@ -156,10 +196,7 @@ private fun BoxScope.ImageAnnotation(wallpaper: Wallpaper) {
         }
 
     ClickableText(
-        modifier =
-            Modifier
-                .align(Alignment.BottomCenter)
-                .padding(32.dp),
+        modifier = Modifier.padding(8.dp),
         style = TextStyle.Default.copy(color = MaterialTheme.colors.onBackground),
         text = annotatedText,
         onClick = { offset ->
@@ -183,7 +220,7 @@ private fun BoxScope.ImageAnnotation(wallpaper: Wallpaper) {
 
 @Composable
 fun BoxScope.DateText(uiStates: UiStateHolder) {
-    val format = "EEEE, MMMM d"
+    val format = "EEE, MMMM d"
     StatusText(
         text = uiStates.time.value.getFormattedTime(format),
         alignment = Alignment.TopEnd,

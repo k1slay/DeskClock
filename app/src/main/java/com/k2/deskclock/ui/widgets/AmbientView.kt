@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -33,7 +33,7 @@ fun AmbientView(
     Box(
         modifier =
             Modifier
-                .fillMaxSize()
+                .safeDrawingPadding()
                 .clickable { ambientClick.invoke() },
     ) {
         if (uiStates.insetVisible.value) {

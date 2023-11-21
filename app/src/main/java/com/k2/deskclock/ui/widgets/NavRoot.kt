@@ -49,8 +49,8 @@ sealed class NavTarget(val name: String) {
         get() {
             return when (this) {
                 Home.name -> Home
-                Settings.name -> Home
-                Ambient.name -> Home
+                Settings.name -> Settings
+                Ambient.name -> Ambient
                 else -> throw java.lang.IllegalArgumentException("invalid nav target")
             }
         }

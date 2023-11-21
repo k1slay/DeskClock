@@ -21,7 +21,8 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:screenOrientation="fullSensor"
-            android:theme="@style/Theme.DeskClock">
+            android:theme="@style/Theme.DeskClock"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
