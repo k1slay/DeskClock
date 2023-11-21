@@ -7,15 +7,14 @@ import com.k2.deskclock.weather.data.models.openMeteo.OpenMeteoResponse
 interface WeatherRemoteDataSource : WeatherDataSource
 
 class WeatherRemoteDataSourceImpl(
-    private val weatherApi: WeatherApiInterface
+    private val weatherApi: WeatherApiInterface,
 ) : WeatherRemoteDataSource {
-
     override suspend fun getWeather(location: Location): OpenMeteoResponse? {
         return kotlin.runCatching {
             weatherApi.fetchWeather(
                 location.lat,
                 location.lng,
-                location.timeZone
+                location.timeZone,
             ).body()
         }.getOrNull()
     }

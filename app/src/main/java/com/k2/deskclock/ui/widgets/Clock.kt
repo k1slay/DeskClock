@@ -35,15 +35,18 @@ fun Clock(uiStates: UiStateHolder) {
         amOrPm.value = this.value.getFormattedTime("a")
     }
 
-    val separatorAlpha by rememberInfiniteTransition().animateFloat(
+    val separatorAlpha by rememberInfiniteTransition(label = "").animateFloat(
         initialValue = 0.0F,
         targetValue = 1.0F,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1500, easing = { fraction ->
-                if (fraction > 0.9F) 1.0F else fraction
-            }),
-            repeatMode = RepeatMode.Reverse
-        )
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(durationMillis = 1500, easing = { fraction ->
+                        if (fraction > 0.9F) 1.0F else fraction
+                    }),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "",
     )
 
     Text(
@@ -63,6 +66,6 @@ fun Clock(uiStates: UiStateHolder) {
         modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         fontSize = uiStates.clockSize.value.sp,
         fontWeight = FontWeight.SemiBold,
-        letterSpacing = 4.sp
+        letterSpacing = 4.sp,
     )
 }

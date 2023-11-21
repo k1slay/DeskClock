@@ -26,72 +26,79 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DeskClockViewModel @Inject constructor(
-    private val weatherProvider: Lazy<WeatherProvider>,
-    private val wallpaperProvider: Lazy<WallpaperProvider>,
-    val preferenceStore: PreferenceStore,
-    private val locationProvider: LocationProvider,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : ViewModel(), UiStateHolder {
+class DeskClockViewModel
+    @Inject
+    constructor(
+        private val weatherProvider: Lazy<WeatherProvider>,
+        private val wallpaperProvider: Lazy<WallpaperProvider>,
+        val preferenceStore: PreferenceStore,
+        private val locationProvider: LocationProvider,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : ViewModel(), UiStateHolder {
+        override val weather: MutableState<Weather?> = mutableStateOf(null)
+        override val wallpaper: MutableState<Wallpaper?> = mutableStateOf(null)
+        override val insetVisible: MutableState<Boolean> = mutableStateOf(true)
+        override val darkTheme: MutableState<Boolean> = mutableStateOf(preferenceStore.darkTheme)
+        override val clockSize: MutableState<Float> = mutableStateOf(preferenceStore.clockSize)
+        override val time: MutableState<Long> = mutableStateOf(System.currentTimeMillis())
+        override val locationError: MutableState<ErrorType?> = mutableStateOf(null)
+        override val navState = mutableStateOf(preferenceStore.homeMode.fromName)
+        var lastUpdatedAt = System.currentTimeMillis()
+            private set
 
-    override val weather: MutableState<Weather?> = mutableStateOf(null)
-    override val wallpaper: MutableState<Wallpaper?> = mutableStateOf(null)
-    override val insetVisible: MutableState<Boolean> = mutableStateOf(true)
-    override val darkTheme: MutableState<Boolean> = mutableStateOf(preferenceStore.darkTheme)
-    override val clockSize: MutableState<Float> = mutableStateOf(preferenceStore.clockSize)
-    override val time: MutableState<Long> = mutableStateOf(System.currentTimeMillis())
-    override val locationError: MutableState<ErrorType?> = mutableStateOf(null)
-    override val navState = mutableStateOf(preferenceStore.homeMode.fromName)
-    var lastUpdatedAt = System.currentTimeMillis()
-        private set
+        fun refresh() {
+            lastUpdatedAt = System.currentTimeMillis()
+            fetchLocationAndWeather()
+            fetchWallpaper()
+        }
 
-    fun refresh() {
-        lastUpdatedAt = System.currentTimeMillis()
-        fetchLocationAndWeather()
-        fetchWallpaper()
-    }
-
-    fun fetchWallpaper() = viewModelScope.launch(ioDispatcher) {
-        wallpaper.value = wallpaperProvider.get().fetchNextWallpaper()
-    }
-
-    @SuppressLint("MissingPermission")
-    fun fetchLocationAndWeather() {
-        locationProvider.getLastKnownLocation(object : LocationListener {
-            override fun onLocation(location: Location) {
-                fetchWeather(location = location)
+        fun fetchWallpaper() =
+            viewModelScope.launch(ioDispatcher) {
+                wallpaper.value = wallpaperProvider.get().fetchNextWallpaper()
             }
 
-            override fun onError(error: LocationError) {
-                if (error.code == ErrorType.Unknown) {
-                    Log.d("Location", "No last known location, Requesting location update")
-                    requestLocationUpdate()
-                } else {
-                    Log.e("Location", error.toString())
-                }
+        @SuppressLint("MissingPermission")
+        fun fetchLocationAndWeather() {
+            locationProvider.getLastKnownLocation(
+                object : LocationListener {
+                    override fun onLocation(location: Location) {
+                        fetchWeather(location = location)
+                    }
+
+                    override fun onError(error: LocationError) {
+                        if (error.code == ErrorType.Unknown) {
+                            Log.d("Location", "No last known location, Requesting location update")
+                            requestLocationUpdate()
+                        } else {
+                            Log.e("Location", error.toString())
+                        }
+                    }
+                },
+            )
+        }
+
+        @SuppressLint("MissingPermission")
+        private fun requestLocationUpdate() {
+            locationProvider.getCurrentLocation(
+                object : LocationListener {
+                    override fun onLocation(location: Location) {
+                        fetchWeather(location = location)
+                    }
+
+                    override fun onError(error: LocationError) {
+                        if (error.code == ErrorType.LocationDisabled) {
+                            locationError.value = error.code
+                        }
+                        Log.e("Location", error.toString())
+                    }
+                },
+            )
+        }
+
+        private fun fetchWeather(location: Location) =
+            viewModelScope.launch(ioDispatcher) {
+                weather.value = weatherProvider.get().getWeather(location)
+                Log.d("Weather", weather.value.toString())
             }
-        })
+
     }
-
-    @SuppressLint("MissingPermission")
-    private fun requestLocationUpdate() {
-        locationProvider.getCurrentLocation(object : LocationListener {
-            override fun onLocation(location: Location) {
-                fetchWeather(location = location)
-            }
-
-            override fun onError(error: LocationError) {
-                if (error.code == ErrorType.LocationDisabled) {
-                    locationError.value = error.code
-                }
-                Log.e("Location", error.toString())
-            }
-        })
-    }
-
-    private fun fetchWeather(location: Location) = viewModelScope.launch(ioDispatcher) {
-        weather.value = weatherProvider.get().getWeather(location)
-        Log.d("Weather", weather.value.toString())
-    }
-
-}

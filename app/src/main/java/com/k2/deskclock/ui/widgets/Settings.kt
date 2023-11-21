@@ -44,46 +44,50 @@ import com.k2.deskclock.ui.theme.Typography
 fun Settings(
     uiStates: UiStateHolder,
     navController: NavController,
-    preferenceStore: PreferenceStore
+    preferenceStore: PreferenceStore,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.size(32.dp))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_arrow_back),
                 contentDescription = "back",
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
-                modifier = Modifier
-                    .size(28.dp)
-                    .alpha(0.8F)
-                    .clickable { navController.navigateUp() }
+                modifier =
+                    Modifier
+                        .size(28.dp)
+                        .alpha(0.8F)
+                        .clickable { navController.navigateUp() },
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = LocalContext.current.getString(R.string.app_name),
                 style = Typography.body1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                 fontSize = 28.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
         }
 
         Spacer(modifier = Modifier.size(20.dp))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 12.dp)
-                .clickable { uiStates.darkTheme.value = uiStates.darkTheme.value.not() },
-            horizontalArrangement = Arrangement.SpaceAround
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 12.dp)
+                    .clickable { uiStates.darkTheme.value = uiStates.darkTheme.value.not() },
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             ListText(text = stringResource(R.string.dark_theme))
             Switch(
@@ -92,30 +96,32 @@ fun Settings(
                     uiStates.darkTheme.value = enabled
                     preferenceStore.darkTheme = enabled
                 },
-                modifier = Modifier.fillMaxWidth(0.2F)
+                modifier = Modifier.fillMaxWidth(0.2F),
             )
         }
 
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .padding(horizontal = 8.dp)
-                .background(Color.Gray)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .padding(horizontal = 8.dp)
+                    .background(Color.Gray),
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             ListText(
                 text = stringResource(R.string.clock_size),
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp),
             )
             ListText(
                 text = uiStates.clockSize.value.toInt().toString(),
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp),
             )
         }
 
@@ -126,24 +132,26 @@ fun Settings(
                 preferenceStore.clockSize = it
             },
             valueRange = 36F..120F,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .padding(horizontal = 8.dp)
-                .background(Color.Gray)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .padding(horizontal = 8.dp)
+                    .background(Color.Gray),
         )
 
         ListText(
             text = stringResource(R.string.wallpaper_query),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
-        val cats = remember {
-            mutableStateOf(preferenceStore.wallpaperCategory)
-        }
+        val cats =
+            remember {
+                mutableStateOf(preferenceStore.wallpaperCategory)
+            }
         TextField(
             value = cats.value,
             singleLine = true,
@@ -152,27 +160,32 @@ fun Settings(
                 cats.value = it
                 preferenceStore.wallpaperCategory = it
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .padding(horizontal = 8.dp)
-                .background(Color.Gray)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .padding(horizontal = 8.dp)
+                    .background(Color.Gray),
         )
     }
 }
 
 @Composable
-fun ListText(text: String, modifier: Modifier = Modifier) {
+fun ListText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text,
         fontSize = 16.sp,
         fontWeight = FontWeight.SemiBold,
         style = Typography.body1,
-        modifier = modifier
-            .padding(vertical = 12.dp)
-            .fillMaxWidth(0.8F)
+        modifier =
+            modifier
+                .padding(vertical = 12.dp)
+                .fillMaxWidth(0.8F),
     )
 }

@@ -26,12 +26,11 @@ import javax.inject.Named
 @Module
 @InstallIn(SingletonComponent::class)
 object WallpaperModule {
-
     @Provides
     fun provideRemoteDataSource(
         weatherApi: WallpaperApiInterface,
         @Named(CLIENT_ID) clientId: String,
-        preferenceStore: PreferenceStore
+        preferenceStore: PreferenceStore,
     ): WallpaperRemoteDataSource {
         return WallpaperRemoteDataSourceImpl(weatherApi, clientId, preferenceStore)
     }
@@ -39,7 +38,7 @@ object WallpaperModule {
     @Provides
     fun provideLocalWallpaperStore(
         dao: WallpaperCacheDao,
-        preferenceStore: PreferenceStore
+        preferenceStore: PreferenceStore,
     ): WallpaperLocalDataSource {
         return WallpaperLocalDataSourceImpl(dao, preferenceStore)
     }
@@ -50,7 +49,9 @@ object WallpaperModule {
     }
 
     @Provides
-    fun provideWeatherApi(@WallpaperRetrofit retrofit: Retrofit): WallpaperApiInterface {
+    fun provideWeatherApi(
+        @WallpaperRetrofit retrofit: Retrofit,
+    ): WallpaperApiInterface {
         return retrofit.create(WallpaperApiInterface::class.java)
     }
 
@@ -59,7 +60,7 @@ object WallpaperModule {
     fun provideRetrofit(
         @Named(API_ENDPOINT) endPoint: String,
         okHttpClient: OkHttpClient.Builder,
-        gsonConverterFactory: GsonConverterFactory
+        gsonConverterFactory: GsonConverterFactory,
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient.build())
@@ -86,7 +87,5 @@ object WallpaperModule {
 @InstallIn(SingletonComponent::class)
 abstract class BoundWallpaperModule {
     @Binds
-    abstract fun bindWallpaperProvider(
-        wallpaperProvider: WallpaperProviderImpl
-    ): WallpaperProvider
+    abstract fun bindWallpaperProvider(wallpaperProvider: WallpaperProviderImpl): WallpaperProvider
 }

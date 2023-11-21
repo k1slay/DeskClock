@@ -21,46 +21,48 @@ import java.io.File
 import java.io.FileFilter
 import javax.inject.Inject
 
-class DebugUtils @Inject internal constructor(
-    @ApplicationContext private val context: Context,
-    private val okHttpClient: OkHttpClient.Builder
-) {
-    fun initFlipper() {
-        SoLoader.init(context, false)
-        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(context)) {
-            val client: FlipperClient = AndroidFlipperClient.getInstance(context)
-            client.addPlugin(InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()))
-            client.addPlugin(DatabasesFlipperPlugin(context))
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                addSharedPrefPlugin(client)
-            }
-            makeNetworkPlugin(client)
-            client.start()
-        }
-    }
-
-    private fun makeNetworkPlugin(client: FlipperClient) {
-        val networkFlipperPlugin = NetworkFlipperPlugin()
-        okHttpClient.addInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
-        client.addPlugin(networkFlipperPlugin)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private fun addSharedPrefPlugin(client: FlipperClient) {
-        val dir = context.dataDir
-        val spDir = File(dir, "shared_prefs")
-        val list = mutableListOf<SharedPreferencesDescriptor>()
-        spDir.listFiles(
-            FileFilter {
-                it.extension == "xml"
-            }
-        )?.let { files ->
-            for (fl in files) {
-                list.add(SharedPreferencesDescriptor(fl.name, Context.MODE_PRIVATE))
+class DebugUtils
+    @Inject
+    internal constructor(
+        @ApplicationContext private val context: Context,
+        private val okHttpClient: OkHttpClient.Builder,
+    ) {
+        fun initFlipper() {
+            SoLoader.init(context, false)
+            if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(context)) {
+                val client: FlipperClient = AndroidFlipperClient.getInstance(context)
+                client.addPlugin(InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()))
+                client.addPlugin(DatabasesFlipperPlugin(context))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    addSharedPrefPlugin(client)
+                }
+                makeNetworkPlugin(client)
+                client.start()
             }
         }
-        val plugin = SharedPreferencesFlipperPlugin(context, list)
-        client.addPlugin(plugin)
-    }
 
-}
+        private fun makeNetworkPlugin(client: FlipperClient) {
+            val networkFlipperPlugin = NetworkFlipperPlugin()
+            okHttpClient.addInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
+            client.addPlugin(networkFlipperPlugin)
+        }
+
+        @RequiresApi(Build.VERSION_CODES.N)
+        private fun addSharedPrefPlugin(client: FlipperClient) {
+            val dir = context.dataDir
+            val spDir = File(dir, "shared_prefs")
+            val list = mutableListOf<SharedPreferencesDescriptor>()
+            spDir.listFiles(
+                FileFilter {
+                    it.extension == "xml"
+                },
+            )?.let { files ->
+                for (fl in files) {
+                    list.add(SharedPreferencesDescriptor(fl.name, Context.MODE_PRIVATE))
+                }
+            }
+            val plugin = SharedPreferencesFlipperPlugin(context, list)
+            client.addPlugin(plugin)
+        }
+
+    }

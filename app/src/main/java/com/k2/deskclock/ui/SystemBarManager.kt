@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import java.util.concurrent.TimeUnit
 
 interface SystemBarManager {
-
     val activityWindow: Window?
 
     val insetState: MutableState<Boolean>
@@ -42,7 +41,7 @@ interface SystemBarManager {
 
     private fun setSystemBarStateCompat(showSystemBars: Boolean) {
         val decorView: View = activityWindow?.decorView ?: return
-        val flags = if (showSystemBars) showFlags else hideFlags
+        val flags = if (showSystemBars) SHOW_FLAGS else HIDE_FLAGS
         decorView.systemUiVisibility = flags
         keepScreenOn(showSystemBars.not())
         if (showSystemBars) {
@@ -50,13 +49,14 @@ interface SystemBarManager {
         }
     }
 
-    private fun keepScreenOn(screenOn: Boolean) = activityWindow?.let {
-        if (screenOn) {
-            it.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } else {
-            it.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    private fun keepScreenOn(screenOn: Boolean) =
+        activityWindow?.let {
+            if (screenOn) {
+                it.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                it.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
-    }
 
     private fun delayedSystemBarHide(view: View) {
         view.postDelayed({
@@ -69,20 +69,19 @@ interface SystemBarManager {
         get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 
     companion object SystemBarFlags {
-
-        const val showFlags: Int = (
+        const val SHOW_FLAGS: Int = (
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            )
+        )
 
-        const val hideFlags: Int = (
+        const val HIDE_FLAGS: Int = (
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            )
+        )
     }
 }

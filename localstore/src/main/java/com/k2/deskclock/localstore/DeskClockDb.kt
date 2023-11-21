@@ -13,10 +13,12 @@ import com.k2.deskclock.weather.data.models.WeatherLocalCache
 
 @Database(
     entities = [WeatherLocalCache::class, AddressLocalCache::class, WallpaperCache::class],
-    version = 1
+    version = 1,
 )
 abstract class DeskClockDb : RoomDatabase(), WeatherDaoProvider, WallpaperDaoProvider {
     abstract override fun weatherCacheDao(): WeatherCacheDao
+
     abstract override fun addressCacheDao(): AddressCacheDao
+
     abstract override fun wallpaperCacheDao(): WallpaperCacheDao
 }

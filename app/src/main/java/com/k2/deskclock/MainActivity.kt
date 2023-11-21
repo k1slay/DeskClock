@@ -29,7 +29,6 @@ import java.lang.Long.min
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
-
     val viewModel by viewModels<DeskClockViewModel>()
     private val tickReceiver = TickReceiver()
 
@@ -39,7 +38,7 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
             DeskClockTheme(viewModel.darkTheme.value) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.background,
                 ) {
                     NavRoot(
                         uiStateHolder = viewModel,
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
                             cancelRunner()
                             loadAll()
                             scheduleRunner()
-                        }
+                        },
                     )
                 }
             }
@@ -87,16 +86,17 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
         viewModel.fetchLocationAndWeather()
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            onLocationGranted()
-        } else {
-            Log.e("Location", "Permission denied")
-            viewModel.locationError.value = ErrorType.NoPermission
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                onLocationGranted()
+            } else {
+                Log.e("Location", "Permission denied")
+                viewModel.locationError.value = ErrorType.NoPermission
+            }
         }
-    }
 
     private fun scheduleRunner() {
         val hr = PERIODIC_REFRESH_INTERVAL
@@ -121,7 +121,10 @@ class MainActivity : ComponentActivity(), Runnable, SystemBarManager {
     }
 
     private inner class TickReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(
+            context: Context?,
+            intent: Intent?,
+        ) {
             viewModel.time.value = System.currentTimeMillis()
         }
     }

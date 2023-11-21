@@ -32,23 +32,27 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 @Composable
-fun Weather(weather: Weather, showForecast: Boolean) {
+fun Weather(
+    weather: Weather,
+    showForecast: Boolean,
+) {
     Column(
         modifier = Modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             weather.icon?.let { icon ->
                 Image(
                     painter = painterResource(icon),
                     contentDescription = weather.userReadableDescription,
-                    colorFilter = ColorFilter.tint(
-                        MaterialTheme.colors.onBackground.copy(0.85F)
-                    ),
-                    modifier = Modifier.size(40.dp)
+                    colorFilter =
+                        ColorFilter.tint(
+                            MaterialTheme.colors.onBackground.copy(0.85F),
+                        ),
+                    modifier = Modifier.size(40.dp),
                 )
                 Spacer(modifier = Modifier.size(8.dp))
             }
@@ -58,16 +62,17 @@ fun Weather(weather: Weather, showForecast: Boolean) {
         weather.userReadableDescription?.let {
             WeatherTextView(
                 text = it,
-                fontSize = 20.sp
+                fontSize = 20.sp,
             )
         }
         Spacer(modifier = Modifier.size(8.dp))
         WeatherTextView(
-            text = "Lows: " +
-                "${weather.dailyMinTemp.roundToInt()} ${weather.temperatureUnit} - " +
-                "Highs: " +
-                "${weather.dailyMaxTemp.roundToInt()} ${weather.temperatureUnit}",
-            fontSize = 16.sp
+            text =
+                "Lows: " +
+                    "${weather.dailyMinTemp.roundToInt()} ${weather.temperatureUnit} - " +
+                    "Highs: " +
+                    "${weather.dailyMaxTemp.roundToInt()} ${weather.temperatureUnit}",
+            fontSize = 16.sp,
         )
         if (showForecast) {
             weather.forecast?.let { Forecast(forecast = it) }
@@ -86,7 +91,7 @@ private fun WeatherText(weather: Weather) {
         },
         fontWeight = FontWeight.SemiBold,
         fontSize = 32.sp,
-        modifier = Modifier.alpha(0.85F)
+        modifier = Modifier.alpha(0.85F),
     )
 }
 
@@ -95,7 +100,7 @@ private fun Forecast(forecast: List<Forecast>) {
     Spacer(modifier = Modifier.size(30.dp))
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         val count = min(5, forecast.size - 1)
         items(count) { index ->
@@ -112,21 +117,22 @@ private fun ForecastItem(forecast: Forecast) {
         Image(
             painter = painterResource(forecast.icon ?: R.drawable.ic_sunny),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(
-                MaterialTheme.colors.onBackground.copy(0.85F)
-            ),
-            modifier = Modifier.size(30.dp)
+            colorFilter =
+                ColorFilter.tint(
+                    MaterialTheme.colors.onBackground.copy(0.85F),
+                ),
+            modifier = Modifier.size(30.dp),
         )
         Spacer(modifier = Modifier.size(4.dp))
         WeatherTextView(
             text = "${forecast.min.roundToInt()} - ${forecast.max.roundToInt()} ${forecast.temperatureUnit}",
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.size(4.dp))
         WeatherTextView(
             text = TimeUnit.SECONDS.toMillis(forecast.date).getFormattedTime("EEE"),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -135,12 +141,13 @@ private fun ForecastItem(forecast: Forecast) {
 private fun WeatherTextView(
     text: String,
     fontSize: TextUnit = 14.sp,
-    fontWeight: FontWeight = FontWeight.SemiBold
+    fontWeight: FontWeight = FontWeight.SemiBold,
 ) {
     Text(
         text = text,
         fontSize = fontSize,
         modifier = Modifier.alpha(0.85F),
-        fontWeight = fontWeight
+        fontWeight = fontWeight,
     )
+
 }

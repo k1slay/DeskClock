@@ -19,7 +19,7 @@ data class Weather(
     val userReadableDescription: String?,
     @DrawableRes val icon: Int?,
     val place: Place?,
-    val forecast: List<Forecast>?
+    val forecast: List<Forecast>?,
 )
 
 data class Forecast(
@@ -33,5 +33,5 @@ data class Forecast(
     val precipitationUnit: String,
     val humidityUnit: String,
     val userReadableDescription: String?,
-    @DrawableRes val icon: Int?
+    @DrawableRes val icon: Int?,
 )

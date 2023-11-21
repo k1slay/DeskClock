@@ -12,7 +12,7 @@ inline val Context.hasLocationPermission: Boolean
 fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(
         this,
-        permission
+        permission,
     ) == PackageManager.PERMISSION_GRANTED
 }
 

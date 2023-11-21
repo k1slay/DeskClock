@@ -12,7 +12,7 @@ fun NavRoot(
     uiStateHolder: UiStateHolder,
     preferenceStore: PreferenceStore,
     ambientClick: () -> Unit,
-    refreshClick: () -> Unit
+    refreshClick: () -> Unit,
 ) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = preferenceStore.homeMode) {
@@ -32,16 +32,17 @@ fun NavRoot(
                 uiStateHolder,
                 ambientClick = ambientClick,
                 navController = navController,
-                refreshClick = refreshClick
+                refreshClick = refreshClick,
             )
         }
     }
 }
 
 sealed class NavTarget(val name: String) {
-
     object Home : NavTarget("home")
+
     object Settings : NavTarget("settings")
+
     object Ambient : NavTarget("ambient")
 
     val String.fromName: NavTarget
@@ -53,5 +54,4 @@ sealed class NavTarget(val name: String) {
                 else -> throw java.lang.IllegalArgumentException("invalid nav target")
             }
         }
-
 }

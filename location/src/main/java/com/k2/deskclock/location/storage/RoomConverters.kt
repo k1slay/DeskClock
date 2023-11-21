@@ -6,7 +6,6 @@ import com.k2.deskclock.location.models.Location
 import com.k2.deskclock.location.models.Place
 
 class RoomConverters {
-
     @TypeConverter
     fun fromLocation(value: String): Location {
         return GSON.fromJson(value, Location::class.java)

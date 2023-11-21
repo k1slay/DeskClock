@@ -8,7 +8,6 @@ import com.k2.deskclock.weather.data.models.Weather
 import java.util.concurrent.TimeUnit
 
 interface UiStateHolder {
-
     val weather: MutableState<Weather?>
     val wallpaper: MutableState<Wallpaper?>
     val insetVisible: MutableState<Boolean>

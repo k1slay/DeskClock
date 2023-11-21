@@ -19,7 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object CommonsModule {
-
     @Provides
     fun providesLoggingInterceptor(): HttpLoggingInterceptor {
         val logging = HttpLoggingInterceptor()
@@ -39,7 +38,9 @@ object CommonsModule {
     }
 
     @Provides
-    fun providesPreferenceStore(@ApplicationContext context: Context): PreferenceStore {
+    fun providesPreferenceStore(
+        @ApplicationContext context: Context,
+    ): PreferenceStore {
         return PreferenceStoreImpl(context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE))
     }
 

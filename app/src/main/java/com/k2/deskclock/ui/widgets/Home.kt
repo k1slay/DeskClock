@@ -50,39 +50,41 @@ fun HomeView(
     uiStates: UiStateHolder,
     ambientClick: () -> Unit,
     navController: NavController,
-    refreshClick: () -> Unit
+    refreshClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { ambientClick.invoke() }
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable { ambientClick.invoke() },
     ) {
         uiStates.wallpaper.value?.let { wallpaper ->
             AsyncImage(
                 model = wallpaper.path,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
         Spacer(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background.copy(alpha = 0.5F))
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background.copy(alpha = 0.5F)),
         )
         if (uiStates.insetVisible.value) {
             NavIcon(
                 navController = navController,
                 icon = R.drawable.ic_ambient,
                 alignment = Alignment.TopStart,
-                navTarget = "ambient"
+                navTarget = "ambient",
             )
             NavIcon(
                 navController = navController,
                 icon = R.drawable.ic_settings,
                 alignment = Alignment.TopEnd,
                 navTarget = "settings",
-                clearBackStack = false
+                clearBackStack = false,
             )
             uiStates.wallpaper.value?.let { wallpaper ->
                 ImageAnnotation(wallpaper)
@@ -91,11 +93,12 @@ fun HomeView(
                 painter = painterResource(R.drawable.ic_sync),
                 contentDescription = "refresh",
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .absoluteOffset(y = (-60).dp)
-                    .size(32.dp)
-                    .clickable { refreshClick.invoke() }
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .absoluteOffset(y = (-60).dp)
+                        .size(32.dp)
+                        .clickable { refreshClick.invoke() },
             )
         } else {
             uiStates.weather.value?.place?.let { PlaceText(location = it) }
@@ -104,7 +107,7 @@ fun HomeView(
         Column(
             modifier = Modifier.align(Alignment.Center),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Clock(uiStates)
             uiStates.weather.value?.let {
@@ -118,61 +121,64 @@ fun HomeView(
 @Composable
 private fun BoxScope.ImageAnnotation(wallpaper: Wallpaper) {
     val context = LocalContext.current
-    val annotatedText = buildAnnotatedString {
-        append("Photo by ")
-        pushStringAnnotation(
-            tag = TAG_PHOTOGRAPHER,
-            annotation = wallpaper.credit.userUrl
-        )
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
+    val annotatedText =
+        buildAnnotatedString {
+            append("Photo by ")
+            pushStringAnnotation(
+                tag = TAG_PHOTOGRAPHER,
+                annotation = wallpaper.credit.userUrl,
             )
-        ) {
-            append(wallpaper.credit.userName)
-        }
-        pop()
-        append(" on ")
-        pushStringAnnotation(
-            tag = TAG_SOURCE,
-            annotation = wallpaper.credit.websiteUrl
-        )
-        withStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
+            withStyle(
+                style =
+                    SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+            ) {
+                append(wallpaper.credit.userName)
+            }
+            pop()
+            append(" on ")
+            pushStringAnnotation(
+                tag = TAG_SOURCE,
+                annotation = wallpaper.credit.websiteUrl,
             )
-        ) {
-            append(wallpaper.credit.websiteName)
+            withStyle(
+                style =
+                    SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+            ) {
+                append(wallpaper.credit.websiteName)
+            }
+            pop()
         }
-        pop()
-    }
 
     ClickableText(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(32.dp),
+        modifier =
+            Modifier
+                .align(Alignment.BottomCenter)
+                .padding(32.dp),
         style = TextStyle.Default.copy(color = MaterialTheme.colors.onBackground),
         text = annotatedText,
         onClick = { offset ->
             annotatedText.getStringAnnotations(
                 tag = TAG_PHOTOGRAPHER,
                 start = offset,
-                end = offset
+                end = offset,
             ).firstOrNull()?.let { annotation ->
                 context.launchUrl(annotation.item)
             }
             annotatedText.getStringAnnotations(
                 tag = TAG_SOURCE,
                 start = offset,
-                end = offset
+                end = offset,
             ).firstOrNull()?.let { annotation ->
                 context.launchUrl(annotation.item)
             }
-        }
+        },
     )
-
 }
 
 @Composable
@@ -180,7 +186,7 @@ fun BoxScope.DateText(uiStates: UiStateHolder) {
     val format = "EEEE, MMMM d"
     StatusText(
         text = uiStates.time.value.getFormattedTime(format),
-        alignment = Alignment.TopEnd
+        alignment = Alignment.TopEnd,
     )
 }
 
@@ -189,22 +195,23 @@ fun BoxScope.PlaceText(location: Place) {
     val place = remember { mutableStateOf(location) }
     StatusText(
         text = place.value.city ?: "",
-        alignment = Alignment.TopStart
+        alignment = Alignment.TopStart,
     )
 }
 
 @Composable
 fun BoxScope.StatusText(
     text: String,
-    alignment: Alignment
+    alignment: Alignment,
 ) {
     Text(
         text = text,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
-        modifier = Modifier
-            .alpha(0.85F)
-            .align(alignment)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier =
+            Modifier
+                .alpha(0.85F)
+                .align(alignment)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     )
 }

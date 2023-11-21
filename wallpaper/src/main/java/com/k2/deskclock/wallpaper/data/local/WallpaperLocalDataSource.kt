@@ -8,15 +8,16 @@ import com.k2.deskclock.wallpaper.data.models.WallpaperCacheDao
 
 interface WallpaperLocalDataSource : WallpaperDataSource {
     suspend fun cacheWallpaper(wallpapers: List<Wallpaper>)
+
     suspend fun updateSeenCount(wallpaperId: String)
+
     suspend fun hasUnseenWallpapers(): Boolean
 }
 
 class WallpaperLocalDataSourceImpl(
     private val dao: WallpaperCacheDao,
-    private val preferenceStore: PreferenceStore
+    private val preferenceStore: PreferenceStore,
 ) : WallpaperLocalDataSource {
-
     override suspend fun cacheWallpaper(wallpapers: List<Wallpaper>) {
         val entities = mutableListOf<WallpaperCache>()
         for (wallpaper in wallpapers) {
@@ -24,7 +25,7 @@ class WallpaperLocalDataSourceImpl(
                 id = wallpaper.id,
                 wallpaper = wallpaper,
                 tags = preferenceStore.wallpaperCategory,
-                fetchedAt = System.currentTimeMillis()
+                fetchedAt = System.currentTimeMillis(),
             ).also {
                 entities.add(it)
             }

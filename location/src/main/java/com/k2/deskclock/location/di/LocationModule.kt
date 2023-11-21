@@ -12,15 +12,10 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class LocationModule {
+    @Binds
+    internal abstract fun bindAnalyticsService(locationProvider: AddressProviderImpl): AddressProvider
 
     @Binds
-    internal abstract fun bindAnalyticsService(
-        locationProvider: AddressProviderImpl
-    ): AddressProvider
-
-    @Binds
-    internal abstract fun bindLocationProvider(
-        locationProvider: LocationProviderImpl
-    ): LocationProvider
+    internal abstract fun bindLocationProvider(locationProvider: LocationProviderImpl): LocationProvider
 
 }

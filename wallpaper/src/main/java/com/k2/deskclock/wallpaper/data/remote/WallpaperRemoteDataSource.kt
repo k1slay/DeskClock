@@ -11,14 +11,14 @@ interface WallpaperRemoteDataSource : WallpaperDataSource
 class WallpaperRemoteDataSourceImpl(
     private val wallpaperApi: WallpaperApiInterface,
     private val clientId: String,
-    private val preferenceStore: PreferenceStore
+    private val preferenceStore: PreferenceStore,
 ) : WallpaperRemoteDataSource {
-
     override suspend fun getWallpapers(): List<Wallpaper>? {
         val category = preferenceStore.wallpaperCategory
-        val response: List<UnsplashResponse>? = kotlin.runCatching {
-            wallpaperApi.fetchWallpaper(clientId, category).body()
-        }.getOrNull()
+        val response: List<UnsplashResponse>? =
+            kotlin.runCatching {
+                wallpaperApi.fetchWallpaper(clientId, category).body()
+            }.getOrNull()
         return response?.toWallpapers()
     }
 

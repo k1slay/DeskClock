@@ -17,32 +17,39 @@ interface WeatherProvider {
 class WeatherProviderImpl(
     private val remoteDataSource: WeatherRemoteDataSource,
     private val localDataSource: WeatherLocalDataSource,
-    private val addressProvider: AddressProvider
+    private val addressProvider: AddressProvider,
 ) : WeatherProvider {
-
-    override suspend fun getWeather(location: Location): Weather? = withContext(Dispatchers.IO) {
-        var locationChanged = false
-        val cachedPlace: Place? = localDataSource.getCachedAddress()
-        val place = if (addressProvider.isPlaceNearby(cachedPlace, location)) {
-            cachedPlace
-        } else {
-            locationChanged = true
-            placeFromApi(location)
-        }
-        if (locationChanged) {
-            weatherFromApi(location, place)
-        } else {
-            weatherFromCache(location, place) ?: kotlin.run {
+    override suspend fun getWeather(location: Location): Weather? =
+        withContext(Dispatchers.IO) {
+            var locationChanged = false
+            val cachedPlace: Place? = localDataSource.getCachedAddress()
+            val place =
+                if (addressProvider.isPlaceNearby(cachedPlace, location)) {
+                    cachedPlace
+                } else {
+                    locationChanged = true
+                    placeFromApi(location)
+                }
+            if (locationChanged) {
                 weatherFromApi(location, place)
+            } else {
+                weatherFromCache(location, place) ?: kotlin.run {
+                    weatherFromApi(location, place)
+                }
             }
         }
-    }
 
-    private suspend fun weatherFromCache(location: Location, place: Place?): Weather? {
+    private suspend fun weatherFromCache(
+        location: Location,
+        place: Place?,
+    ): Weather? {
         return localDataSource.getWeather(location)?.toWeather(place)
     }
 
-    private suspend fun weatherFromApi(location: Location, place: Place?): Weather? {
+    private suspend fun weatherFromApi(
+        location: Location,
+        place: Place?,
+    ): Weather? {
         return remoteDataSource.getWeather(location)?.also {
             localDataSource.cacheWeatherAsync(it, location)
         }?.toWeather(place)

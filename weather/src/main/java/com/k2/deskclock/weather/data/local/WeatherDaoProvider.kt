@@ -5,5 +5,6 @@ import com.k2.deskclock.weather.data.models.WeatherCacheDao
 
 interface WeatherDaoProvider {
     fun weatherCacheDao(): WeatherCacheDao
+
     fun addressCacheDao(): AddressCacheDao
 }

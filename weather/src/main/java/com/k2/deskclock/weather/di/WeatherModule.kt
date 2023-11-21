@@ -29,7 +29,7 @@ object WeatherModule {
     fun provideWeatherProvider(
         remoteDataSource: WeatherRemoteDataSource,
         localDataSource: WeatherLocalDataSource,
-        addressProvider: AddressProvider
+        addressProvider: AddressProvider,
     ): WeatherProvider {
         return WeatherProviderImpl(remoteDataSource, localDataSource, addressProvider)
     }
@@ -43,13 +43,15 @@ object WeatherModule {
     @DelicateCoroutinesApi
     fun provideLocalDataSource(
         weatherCacheDao: WeatherCacheDao,
-        addressCacheDao: AddressCacheDao
+        addressCacheDao: AddressCacheDao,
     ): WeatherLocalDataSource {
         return WeatherLocalDataSourceImpl(weatherCacheDao, addressCacheDao)
     }
 
     @Provides
-    fun provideWeatherApi(@WeatherRetrofit retrofit: Retrofit): WeatherApiInterface {
+    fun provideWeatherApi(
+        @WeatherRetrofit retrofit: Retrofit,
+    ): WeatherApiInterface {
         return retrofit.create(WeatherApiInterface::class.java)
     }
 
@@ -68,7 +70,7 @@ object WeatherModule {
     fun provideRetrofit(
         @Named(API_ENDPOINT) endPoint: String,
         okHttpClient: OkHttpClient.Builder,
-        gsonConverterFactory: GsonConverterFactory
+        gsonConverterFactory: GsonConverterFactory,
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient.build())

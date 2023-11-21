@@ -15,14 +15,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalStoreModule {
-
     @Provides
     @Singleton
-    fun provideAppDb(@ApplicationContext context: Context): DeskClockDb {
+    fun provideAppDb(
+        @ApplicationContext context: Context,
+    ): DeskClockDb {
         return Room.databaseBuilder(
             context.applicationContext,
             DeskClockDb::class.java,
-            "DeskClockDb.db"
+            "DeskClockDb.db",
         ).build()
     }
 

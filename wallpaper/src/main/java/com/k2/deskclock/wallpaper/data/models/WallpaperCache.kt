@@ -19,12 +19,11 @@ data class WallpaperCache(
     @ColumnInfo(name = "rawData") val wallpaper: Wallpaper,
     @ColumnInfo(name = "tags") val tags: String?,
     @ColumnInfo(name = "fetchedAt") val fetchedAt: Long,
-    @ColumnInfo(name = "accessCount") val accessCount: Int = 0
+    @ColumnInfo(name = "accessCount") val accessCount: Int = 0,
 )
 
 @Dao
 interface WallpaperCacheDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addEntry(wallpaper: WallpaperCache)
 
@@ -46,7 +45,6 @@ interface WallpaperCacheDao {
 }
 
 class Converters {
-
     @TypeConverter
     fun fromWallpaper(value: String): Wallpaper {
         return GSON.fromJson(value, Wallpaper::class.java)

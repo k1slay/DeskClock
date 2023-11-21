@@ -32,41 +32,42 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun BoxScope.LocationErrorSnackBar(
     modifier: Modifier = Modifier,
-    uiStateHolder: UiStateHolder
+    uiStateHolder: UiStateHolder,
 ) {
-    val message: String? = when (uiStateHolder.locationError.value) {
-        ErrorType.LocationDisabled -> stringResource(R.string.location_error_disabled)
-        ErrorType.NoPermission -> stringResource(R.string.location_error_permission)
-        else -> null
-    }
+    val message: String? =
+        when (uiStateHolder.locationError.value) {
+            ErrorType.LocationDisabled -> stringResource(R.string.location_error_disabled)
+            ErrorType.NoPermission -> stringResource(R.string.location_error_permission)
+            else -> null
+        }
     LaunchedEffect(key1 = System.currentTimeMillis(), block = {
         delay(TimeUnit.SECONDS.toMillis(5))
         uiStateHolder.locationError.value = null
     })
     message?.let {
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .align(Alignment.BottomCenter)
-                .background(Color.DarkGray),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .align(Alignment.BottomCenter)
+                    .background(Color.DarkGray),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(modifier = Modifier.size(12.dp))
             Image(
                 painter = painterResource(id = R.drawable.ic_location_off),
-                contentDescription = ""
+                contentDescription = "",
             )
             Text(
                 text = message,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 fontSize = 14.sp,
-                fontWeight = FontWeight(600)
+                fontWeight = FontWeight(600),
             )
         }
     }
-
 }

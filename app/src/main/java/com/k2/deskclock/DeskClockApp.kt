@@ -7,9 +7,9 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class DeskClockApp : Application() {
-
     @Inject
     lateinit var debugUtils: DebugUtils
+
     override fun onCreate() {
         super.onCreate()
         debugUtils.initFlipper()

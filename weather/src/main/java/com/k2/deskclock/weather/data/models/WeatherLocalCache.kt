@@ -21,7 +21,7 @@ data class WeatherLocalCache(
     @PrimaryKey val uid: Int = UID,
     @ColumnInfo(name = "raw_data") val data: OpenMeteoResponse,
     @ColumnInfo(name = "location") val location: Location,
-    @ColumnInfo(name = "fetched_at") val fetchedAt: Long
+    @ColumnInfo(name = "fetched_at") val fetchedAt: Long,
 ) {
     companion object {
         const val UID = 1
@@ -32,7 +32,7 @@ data class WeatherLocalCache(
 @TypeConverters(RoomConverters::class)
 data class AddressLocalCache(
     @PrimaryKey val uid: Int = UID,
-    @ColumnInfo(name = "address") val place: Place
+    @ColumnInfo(name = "address") val place: Place,
 ) {
     companion object {
         const val UID = 1
@@ -50,7 +50,6 @@ interface AddressCacheDao {
 
 @Dao
 interface WeatherCacheDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveToCache(weatherLocalCache: WeatherLocalCache)
 
@@ -59,7 +58,6 @@ interface WeatherCacheDao {
 }
 
 class Converters {
-
     @TypeConverter
     fun fromOpenMeteoResponse(value: String): OpenMeteoResponse {
         return GSON.fromJson(value, OpenMeteoResponse::class.java)

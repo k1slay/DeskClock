@@ -8,7 +8,7 @@ import com.k2.deskclock.weather.R
 import com.k2.deskclock.weather.data.models.Forecast
 import com.k2.deskclock.weather.data.models.Weather
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -21,7 +21,7 @@ data class OpenMeteoResponse(
     @SerializedName("longitude") val lng: Double,
     @SerializedName("utc_offset_seconds") val utcOffsetSeconds: Long,
     @SerializedName("daily_units") val dailyUnits: DailyUnits,
-    @SerializedName("hourly_units") val hourlyUnits: HourlyUnits
+    @SerializedName("hourly_units") val hourlyUnits: HourlyUnits,
 ) {
     fun toWeather(place: Place?): Weather {
         val curTimeSecs = MILLISECONDS.toSeconds(System.currentTimeMillis())
@@ -43,12 +43,15 @@ data class OpenMeteoResponse(
             wmoCodeToText(daily.weatherCode[dailyIndex]),
             wmoCodeToIcon(daily.weatherCode[dailyIndex], curTimeSecs > daily.sunset[dailyIndex]),
             place,
-            makeForecast(this, curTimeSecs)
+            makeForecast(this, curTimeSecs),
         )
     }
 }
 
-private fun makeForecast(weather: OpenMeteoResponse, curTimeInSecs: Long): List<Forecast> {
+private fun makeForecast(
+    weather: OpenMeteoResponse,
+    curTimeInSecs: Long,
+): List<Forecast> {
     val daily = weather.daily
     val list = mutableListOf<Forecast>()
     val today = curTimeInSecs.toDateString
@@ -65,7 +68,7 @@ private fun makeForecast(weather: OpenMeteoResponse, curTimeInSecs: Long): List<
                 weather.dailyUnits.precipitation,
                 weather.dailyUnits.precipitation,
                 wmoCodeToText(daily.weatherCode[index]),
-                wmoCodeToIcon(daily.weatherCode[index], false)
+                wmoCodeToIcon(daily.weatherCode[index], false),
             ).also {
                 list.add(it)
             }
@@ -85,7 +88,7 @@ private val Long.toDateString: String
 data class HourlyUnits(
     @SerializedName("time") val time: String,
     @SerializedName("temperature_2m") val temp: String,
-    @SerializedName("relativehumidity_2m") val humidity: String
+    @SerializedName("relativehumidity_2m") val humidity: String,
 )
 
 @Keep
@@ -94,7 +97,7 @@ data class DailyUnits(
     @SerializedName("time") val time: String,
     @SerializedName("weathercode") val weatherCode: String,
     @SerializedName("sunrise") val sunrise: String,
-    @SerializedName("precipitation_sum") val precipitation: String
+    @SerializedName("precipitation_sum") val precipitation: String,
 )
 
 @Keep
@@ -105,14 +108,14 @@ data class Daily(
     @SerializedName("weathercode") val weatherCode: List<Int>,
     @SerializedName("precipitation_sum") val precipitation: List<Float?>,
     @SerializedName("temperature_2m_max") val maxTemp: List<Float>,
-    @SerializedName("temperature_2m_min") val minTemp: List<Float>
+    @SerializedName("temperature_2m_min") val minTemp: List<Float>,
 )
 
 @Keep
 data class Hourly(
     @SerializedName("time") val timeList: List<Long>,
     @SerializedName("temperature_2m") val temperature: List<Float>,
-    @SerializedName("relativehumidity_2m") val humidity: List<Int>
+    @SerializedName("relativehumidity_2m") val humidity: List<Int>,
 )
 
 private fun List<Long>.getCurrentTimeIndex(current: Long): Int {
@@ -147,7 +150,10 @@ private fun wmoCodeToText(code: Int): String? {
     }
 }
 
-fun wmoCodeToIcon(code: Int, night: Boolean): Int? {
+fun wmoCodeToIcon(
+    code: Int,
+    night: Boolean,
+): Int? {
     return when (code) {
         0, 1, 2, 3 -> if (night) R.drawable.weather_night_clear else R.drawable.weather_sunny
         45, 48 -> R.drawable.weather_fog

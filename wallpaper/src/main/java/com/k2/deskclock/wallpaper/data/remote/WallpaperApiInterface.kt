@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WallpaperApiInterface {
-
     @GET("/photos/random/")
     suspend fun fetchWallpaper(
         @Query("client_id") apiKey: String,
@@ -15,7 +14,7 @@ interface WallpaperApiInterface {
         @Query("orientation") orientation: String = "landscape",
         @Query("featured") featured: String = "true",
         @Query("query") category: String = "longexposure",
-        @Query("count") count: Int = 25
+        @Query("count") count: Int = 25,
     ): Response<List<UnsplashResponse>>
 
 }

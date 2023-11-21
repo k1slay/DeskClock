@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 @SuppressLint("SimpleDateFormat")
 fun Long.getFormattedTime(format: String): String {

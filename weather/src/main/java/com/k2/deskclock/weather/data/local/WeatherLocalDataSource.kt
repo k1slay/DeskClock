@@ -15,15 +15,12 @@ import kotlinx.coroutines.async
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 interface WeatherLocalDataSource : WeatherDataSource {
-
     fun cacheWeatherAsync(
         openMeteoResponse: OpenMeteoResponse,
-        location: Location
+        location: Location,
     ): Deferred<Unit>
 
-    fun cacheAddressAsync(
-        place: Place
-    ): Deferred<Unit>
+    fun cacheAddressAsync(place: Place): Deferred<Unit>
 
     suspend fun getCachedAddress(): Place?
 }
@@ -31,20 +28,19 @@ interface WeatherLocalDataSource : WeatherDataSource {
 @DelicateCoroutinesApi
 class WeatherLocalDataSourceImpl(
     private val weatherCacheDao: WeatherCacheDao,
-    private val addressCacheDao: AddressCacheDao
+    private val addressCacheDao: AddressCacheDao,
 ) : WeatherLocalDataSource {
-
     @OptIn(DelicateCoroutinesApi::class)
     override fun cacheWeatherAsync(
         openMeteoResponse: OpenMeteoResponse,
-        location: Location
+        location: Location,
     ) = GlobalScope.async {
         weatherCacheDao.saveToCache(
             WeatherLocalCache(
                 data = openMeteoResponse,
                 location = location,
-                fetchedAt = System.currentTimeMillis()
-            )
+                fetchedAt = System.currentTimeMillis(),
+            ),
         )
     }
 
@@ -63,7 +59,8 @@ class WeatherLocalDataSourceImpl(
         return addressCacheDao.getFromCache()?.place
     }
 
-    override fun cacheAddressAsync(place: Place) = GlobalScope.async {
-        addressCacheDao.saveToCache(AddressLocalCache(place = place))
-    }
+    override fun cacheAddressAsync(place: Place) =
+        GlobalScope.async {
+            addressCacheDao.saveToCache(AddressLocalCache(place = place))
+        }
 }

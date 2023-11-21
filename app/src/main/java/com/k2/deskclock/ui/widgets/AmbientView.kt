@@ -28,32 +28,33 @@ import com.k2.deskclock.ui.UiStateHolder
 fun AmbientView(
     uiStates: UiStateHolder,
     ambientClick: () -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { ambientClick.invoke() }
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable { ambientClick.invoke() },
     ) {
         if (uiStates.insetVisible.value) {
             NavIcon(
                 navController = navController,
                 icon = R.drawable.ic_sunny,
                 alignment = Alignment.TopStart,
-                navTarget = "home"
+                navTarget = "home",
             )
             NavIcon(
                 navController = navController,
                 icon = R.drawable.ic_settings,
                 alignment = Alignment.TopEnd,
                 navTarget = "settings",
-                clearBackStack = false
+                clearBackStack = false,
             )
         }
         Column(
             modifier = Modifier.align(Alignment.Center),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Clock(uiStates)
             uiStates.weather.value?.let {
@@ -70,23 +71,24 @@ fun BoxScope.NavIcon(
     @DrawableRes icon: Int,
     alignment: Alignment,
     navTarget: String,
-    clearBackStack: Boolean = true
+    clearBackStack: Boolean = true,
 ) {
     Image(
         painter = painterResource(icon),
         contentDescription = navTarget,
         colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground),
-        modifier = Modifier
-            .align(alignment)
-            .absoluteOffset(y = 20.dp)
-            .padding(20.dp)
-            .size(32.dp)
-            .alpha(0.8F)
-            .clickable {
-                if (clearBackStack) {
-                    navController.popBackStack()
-                }
-                navController.navigate(navTarget, navOptions { launchSingleTop = true })
-            }
+        modifier =
+            Modifier
+                .align(alignment)
+                .absoluteOffset(y = 20.dp)
+                .padding(20.dp)
+                .size(32.dp)
+                .alpha(0.8F)
+                .clickable {
+                    if (clearBackStack) {
+                        navController.popBackStack()
+                    }
+                    navController.navigate(navTarget, navOptions { launchSingleTop = true })
+                },
     )
 }
